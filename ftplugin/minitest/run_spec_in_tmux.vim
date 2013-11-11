@@ -65,6 +65,6 @@ function! s:RunTest()
   call system("tmux send-key -t 7 'testdrb " . expand('%:p') . s:Notification() . "' Enter")
 endfunction
 
-nmap <F7>rf :call <SID>RunTestInSplit(1)<CR>
-nmap <F7>rs :call <SID>RunTestInSplit(0)<CR>
-nmap <F7>rt :call <SID>RunTest()<CR>
+nmap <buffer> <F7>rf :call <SID>RunTestInSplit(1)<CR>
+nmap <buffer> <F7>rs :call <SID>RunTestInSplit(0)<CR>
+nmap <buffer> <F7>rt :call <SID>RunTest()<CR>

@@ -62,7 +62,12 @@ function! s:RunTestInSplit(run_focused)
 endfunction
 
 function! s:RunTest()
-  call system("tmux send-key -t 7 'testdrb " . expand('%:p') . s:Notification() . "' Enter")
+  if s:SporkPresent()
+    call system("tmux send-key -t 7 'testdrb " . expand('%') . s:Notification() . "' Enter")
+  else
+    call system("tmux send-key -t 7 'ruby -I" . s:TestHelperPath() . ' ' .
+      \ expand('%') . s:Notification() . "' Enter")
+  endif
 endfunction
 
 nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>

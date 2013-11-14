@@ -54,23 +54,24 @@ function! s:RunTestInSplit(run_focused)
   end
 
   if s:SporkPresent()
-    call system("tmux send-key -t 1 'testdrb " . expand('%:.') .
-      \ ' -- '.  l:test_name_option . "' Enter")
+    let l:command = 'testdrb ' . expand('%') .  ' --'
   else
-    call system("tmux send-key -t 1 'ruby -I" . s:TestHelperPath() . " " .
-      \ expand('%:.') . " " . l:test_name_option . "' Enter")
+    let l:command = 'ruby -I' . s:TestHelperPath() . ' ' .  expand('%')
   endif
 
+  call system("tmux send-key -t 1 '" . l:command . " " . l:test_name_option . "' Enter")
   call system("tmux last-pane")
 endfunction
 
 function! s:RunTest()
   if s:SporkPresent()
-    call system("tmux send-key -t 7 'testdrb " . expand('%') . s:Notification() . "' Enter")
+    let l:command = 'testdrb'
   else
-    call system("tmux send-key -t 7 'ruby -I" . s:TestHelperPath() . ' ' .
-      \ expand('%') . s:Notification() . "' Enter")
+    let l:command = 'ruby -I' . s:TestHelperPath()
   endif
+
+  call system("tmux send-key -t 7 '" . l:command . " " . expand('%') .
+    \ s:Notification() . "' Enter")
 endfunction
 
 nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>

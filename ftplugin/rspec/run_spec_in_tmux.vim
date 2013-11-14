@@ -7,10 +7,6 @@ function! s:Notification()
   return "; notify-send -t 2000 Done"
 endfunction
 
-function! s:RunFocusedTest()
-  call system("tmux send-key -t 7 'rspec " . s:FocusedTestName() . s:Notification() . "' Enter")
-endfunction
-
 function! s:SwitchOrCreateResultsPane()
   if system('tmux list-panes | wc -l') == 2
     call system('tmux select-pane -t 1')
@@ -19,16 +15,24 @@ function! s:SwitchOrCreateResultsPane()
   endif
 endfunction
 
-function! s:RunFocusedTestInSplit()
-  call s:SwitchOrCreateResultsPane()
-  call system("tmux send-key -t 1 'rspec " . s:FocusedTestName() . "' Enter")
-  call system("tmux select-pane -t 0")
-endfunction
-
 function! s:RunTest()
   call system("tmux send-key -t 7 'rspec " . expand('%:p') . s:Notification() . "' Enter")
 endfunction
 
-nmap <buffer> <F6>rt :call <SID>RunFocusedTest()<CR>
-nmap <buffer> <F6>rs :call <SID>RunFocusedTestInSplit()<CR>
-nmap <buffer> <F6>a :call <SID>RunTest()<CR>
+function! s:RunTestInSplit(run_focused)
+  call s:SwitchOrCreateResultsPane()
+
+  if a:run_focused
+    let l:file_name = s:FocusedTestName()
+  else
+    let l:file_name = expand('%')
+  endif
+
+  call system("tmux send-key -t 1 'rspec " . l:file_name . "' Enter")
+
+  call system("tmux last-pane")
+endfunction
+
+nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>
+nmap <buffer> <F6>rs :call <SID>RunTestInSplit(0)<CR>
+nmap <buffer> <F6>rt :call <SID>RunTest()<CR>

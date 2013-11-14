@@ -11,11 +11,14 @@ function! s:FocusedTestName()
     let l:line = getline(l:it_line_no)
     let l:method_name = matchlist(l:line, '\v"(.+)"')[1]
     let l:formatted_method_name = substitute(l:method_name, '\v%( |\/)', '.', 'g')
-    return l:formatted_method_name . '$'
   elseif l:def_line_no
     let l:line = getline(l:def_line_no)
-    let l:method_name = matchlist(l:line, '\v^\s*def (.+)$')[1]
-    return l:method_name . '$'
+    let l:formatted_method_name = matchlist(l:line, '\v^\s*def (.+)$')[1]
+  endif
+
+  if exists('l:formatted_method_name')
+    let l:escaped_method_name = escape(l:formatted_method_name, '!')
+    return l:escaped_method_name . '$'
   endif
 endfunction
 

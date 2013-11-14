@@ -12,7 +12,8 @@ function! s:SwitchOrCreateResultsPane()
 endfunction
 
 function! s:RunTest()
-  call system("tmux send-key -t 7 'rspec " . expand('%:p') . run_tests_lib#Notification() . "' Enter")
+  call system("tmux send-key -t 7 'rspec " . expand('%:p') . "' Enter")
+  call run_tests_lib#Notification(7)
 endfunction
 
 function! s:RunTestInSplit(run_focused)
@@ -24,8 +25,8 @@ function! s:RunTestInSplit(run_focused)
     let l:file_name = expand('%')
   endif
 
-  call system("tmux send-key -t 1 'rspec " . l:file_name .
-    \ run_tests_lib#Notification() . "' Enter")
+  call system("tmux send-key -t 1 'rspec " . l:file_name . "' Enter")
+  call run_tests_lib#Notification(1)
 
   call system("tmux last-pane")
 endfunction

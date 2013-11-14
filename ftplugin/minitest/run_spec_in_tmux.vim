@@ -55,8 +55,8 @@ function! s:RunTestInSplit(run_focused)
     let l:command = 'ruby -I' . s:TestHelperPath() . ' ' .  expand('%')
   endif
 
-  call system("tmux send-key -t 1 '" . l:command . " " . l:test_name_option .
-    \ run_tests_lib#Notification() . "' Enter")
+  call system("tmux send-key -t 1 '" . l:command . " " . l:test_name_option . "' Enter")
+  call run_tests_lib#Notification(1)
   call system("tmux last-pane")
 endfunction
 
@@ -67,8 +67,8 @@ function! s:RunTest()
     let l:command = 'ruby -I' . s:TestHelperPath()
   endif
 
-  call system("tmux send-key -t 7 '" . l:command . " " . expand('%') .
-    \ run_tests_lib#Notification() . "' Enter")
+  call system("tmux send-key -t 7 '" . l:command . " " . expand('%') . "' Enter")
+  call run_tests_lib#Notification(7)
 endfunction
 
 nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>

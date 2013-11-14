@@ -3,10 +3,6 @@ function! s:FocusedTestName()
   return s:focused_test_name
 endfunction
 
-function! s:Notification()
-  return "; notify-send -t 2000 Done"
-endfunction
-
 function! s:SwitchOrCreateResultsPane()
   if system('tmux list-panes | wc -l') == 2
     call system('tmux select-pane -t 1')
@@ -16,7 +12,7 @@ function! s:SwitchOrCreateResultsPane()
 endfunction
 
 function! s:RunTest()
-  call system("tmux send-key -t 7 'rspec " . expand('%:p') . s:Notification() . "' Enter")
+  call system("tmux send-key -t 7 'rspec " . expand('%:p') . run_tests_lib#Notification() . "' Enter")
 endfunction
 
 function! s:RunTestInSplit(run_focused)

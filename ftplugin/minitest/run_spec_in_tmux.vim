@@ -22,10 +22,6 @@ function! s:FocusedTestName()
   endif
 endfunction
 
-function! s:Notification()
-  return "; notify-send -t 2000 Done"
-endfunction
-
 function! s:SwitchOrCreateResultsPane()
   if system('tmux list-panes | wc -l') == 2
     call system('tmux select-pane -t 1')
@@ -71,7 +67,7 @@ function! s:RunTest()
   endif
 
   call system("tmux send-key -t 7 '" . l:command . " " . expand('%') .
-    \ s:Notification() . "' Enter")
+    \ run_tests_lib#Notification() . "' Enter")
 endfunction
 
 nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>

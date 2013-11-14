@@ -24,7 +24,8 @@ function! s:RunTestInSplit(run_focused)
     let l:file_name = expand('%')
   endif
 
-  call system("tmux send-key -t 1 'rspec " . l:file_name . "' Enter")
+  call system("tmux send-key -t 1 'rspec " . l:file_name .
+    \ run_tests_lib#Notification() . "' Enter")
 
   call system("tmux last-pane")
 endfunction

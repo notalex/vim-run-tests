@@ -30,10 +30,6 @@ function! s:SwitchOrCreateResultsPane()
   endif
 endfunction
 
-function! s:SporkPresent()
-  return strlen(system('pidof spork'))
-endfunction
-
 function! s:TestHelperPath()
   let s:path = expand('%:.')
   return matchstr(s:path, '\v.*test\/')
@@ -49,7 +45,7 @@ function! s:RunTestInSplit(run_focused)
     let l:test_name_option = ''
   end
 
-  if s:SporkPresent()
+  if run_tests_lib#SporkPresent()
     let l:command = 'testdrb ' . expand('%') .  ' --'
   else
     let l:command = 'ruby -I' . s:TestHelperPath() . ' ' .  expand('%')
@@ -61,7 +57,7 @@ function! s:RunTestInSplit(run_focused)
 endfunction
 
 function! s:RunTest()
-  if s:SporkPresent()
+  if run_tests_lib#SporkPresent()
     let l:command = 'testdrb'
   else
     let l:command = 'ruby -I' . s:TestHelperPath()

@@ -4,7 +4,9 @@ function! s:FocusedTestName()
 endfunction
 
 function! s:RspecCommand()
-  if run_tests_lib#SporkPresent()
+  if run_tests_lib#ZeusPresent()
+    return run_tests_lib#ZeusCommand()
+  elseif run_tests_lib#SporkPresent()
     return 'rspec --drb'
   else
     return 'rspec'

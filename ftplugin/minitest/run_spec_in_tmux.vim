@@ -45,7 +45,9 @@ function! s:RunTestInSplit(run_focused)
     let l:test_name_option = ''
   end
 
-  if run_tests_lib#SporkPresent()
+  if run_tests_lib#ZeusPresent()
+    let l:command = run_tests_lib#ZeusCommand()
+  elseif run_tests_lib#SporkPresent()
     let l:command = 'testdrb ' . expand('%') .  ' --'
   else
     let l:command = 'ruby -I' . s:TestHelperPath() . ' ' .  expand('%')

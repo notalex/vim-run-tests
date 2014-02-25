@@ -3,13 +3,21 @@ function! s:FocusedTestName()
   return s:focused_test_name
 endfunction
 
+function! s:Command()
+  if run_tests_lib#ZeusPresent()
+    return 'zeus cucumber'
+  else
+    return 'cucumber'
+  endif
+endfunction
+
 function! s:RunFocusedTest()
-  call system("tmux send-key -t 7 'cucumber " . s:FocusedTestName() . "' Enter")
+  call system("tmux send-key -t 7 " . s:Command() . " " . s:FocusedTestName() . "' Enter")
   call run_tests_lib#Notification(7)
 endfunction
 
 function! s:RunTest()
-  call system("tmux send-key -t 7 'cucumber " . expand('%:p') . "' Enter")
+  call system("tmux send-key -t 7 " . s:Command() . " " . expand('%:p') . "' Enter")
   call run_tests_lib#Notification(7)
 endfunction
 

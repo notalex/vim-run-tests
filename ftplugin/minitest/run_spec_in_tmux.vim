@@ -94,6 +94,15 @@ function! s:CloseTestWindow()
   execute 'bdelete ' . <SID>ResultsWindowName()
 endfunction
 
+function! s:RunTest()
+  let l:command = 'ruby -I' . s:TestHelperPath()
+  "let l:command = 'cd; cd -; ' . l:command
+
+  call system("tmux send-key -t 7 '" . l:command . " " . expand('%') . "' Enter")
+  call run_tests_lib#Notification(7)
+endfunction
+
 nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1)<CR>
 nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0)<CR>
 nmap <buffer> <F6>tc :call <SID>CloseTestWindow()<CR>
+nmap <buffer> <F6>tt :call <SID>RunTest()<CR>

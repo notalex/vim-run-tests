@@ -73,14 +73,20 @@ endfunction
 
 function! s:JobHandler()
   if v:job_data[1] == 'exit'
-    let str = 'job '.v:job_data[0].' exited'
+    let lines = []
   else
-    let str = join(v:job_data[2])
+    let lines = v:job_data[2]
   endif
 
-  call <SID>SwitchToResultsWindow()
-  call append(line('$'), str)
-  call <SID>SwitchToSourceWindow()
+  if len(lines)
+    call <SID>SwitchToResultsWindow()
+
+    for line in lines
+      call append(line('$'), line)
+    endfor
+
+    call <SID>SwitchToSourceWindow()
+  endif
 endfunction
 
 nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>

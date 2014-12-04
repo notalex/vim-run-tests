@@ -45,7 +45,7 @@ function! s:SendCurrentLineToJob()
   let current_line_contents = getline('.')
   " Without this, the input would be printed twice.
   normal! dd
-  call jobsend(g:current_tests_job, current_line_contents . "\n")
+  silent! call jobsend(g:current_tests_job, current_line_contents . "\n")
 endfunction
 
 function! run_tests_lib#ClearScreen()

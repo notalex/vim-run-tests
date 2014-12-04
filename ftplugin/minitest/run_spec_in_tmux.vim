@@ -89,5 +89,11 @@ function! s:JobHandler()
   endif
 endfunction
 
-nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>
-nmap <buffer> <F6>rs :call <SID>RunTestInSplit(0)<CR>
+function! s:CloseTestWindow()
+  silent! call jobstop(s:current_job)
+  execute 'bdelete ' . <SID>ResultsWindowName()
+endfunction
+
+nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1)<CR>
+nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0)<CR>
+nmap <buffer> <F6>tc :call <SID>CloseTestWindow()<CR>

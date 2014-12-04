@@ -29,7 +29,11 @@ function! run_tests_lib#SwitchToWindow(window_number)
 endfunction
 
 function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
+  let parent_syntax = &syntax
+
   execute a:split_type . ' ' . a:window_name
+
+  execute "set syntax=" . parent_syntax
   setlocal bufhidden=wipe buftype=nofile
   resize -15
   inoremap <buffer> <C-m> <ESC>:call <SID>SendCurrentLineToJob()<CR>

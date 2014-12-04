@@ -32,6 +32,14 @@ function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
   execute a:split_type . ' ' . a:window_name
   setlocal bufhidden=wipe buftype=nofile
   resize -15
+  inoremap <buffer> <C-m> <ESC>:call <SID>SendCurrentLineToJob()<CR>
+endfunction
+
+function! s:SendCurrentLineToJob()
+  let current_line_contents = getline('.')
+  " Without this, the input would be printed twice.
+  normal! dd
+  call jobsend(g:current_tests_job, current_line_contents . "\n")
 endfunction
 
 function! run_tests_lib#ClearScreen()

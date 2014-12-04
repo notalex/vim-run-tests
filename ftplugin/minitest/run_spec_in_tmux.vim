@@ -66,7 +66,7 @@ function! s:RunTestInSplit(run_focused)
   call <SID>SwitchToSourceWindow()
 
   let ruby_command = ['-r', '/tmp/opts.rb', '-I', 'test'] + [s:source_file_path] + test_name_option
-  let s:current_job = jobstart('test_runner', 'ruby', ruby_command)
+  let g:current_tests_job = jobstart('test_runner', 'ruby', ruby_command)
 
   autocmd! JobActivity test_runner call <SID>JobHandler()
 endfunction
@@ -85,12 +85,14 @@ function! s:JobHandler()
       call append(line('$'), line)
     endfor
 
+    normal! G
+
     call <SID>SwitchToSourceWindow()
   endif
 endfunction
 
 function! s:CloseTestWindow()
-  silent! call jobstop(s:current_job)
+  silent! call jobstop(g:current_tests_job)
   execute 'bdelete ' . <SID>ResultsWindowName()
 endfunction
 

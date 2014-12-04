@@ -78,7 +78,7 @@ function! s:JobHandler()
     let lines = v:job_data[2]
   endif
 
-  if len(lines)
+  if len(lines) && !strlen(matchstr(lines[0], '\vBundler::GemNotFound'))
     call <SID>SwitchToResultsWindow()
 
     for line in lines

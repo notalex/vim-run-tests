@@ -6,10 +6,8 @@ endif
 
 " private {{{1
 
-let s:results_window_prefix = '__Test_Results_For_Buffer__'
-
 function! s:ResultsWindowName()
-  return s:results_window_prefix . bufnr('%')
+  return '__Ruby_Test_Results__'
 endfunction
 
 function! s:SwitchToSourceWindow()

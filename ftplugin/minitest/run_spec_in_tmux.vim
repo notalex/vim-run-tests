@@ -79,6 +79,8 @@ function! s:JobHandler()
   endif
 
   if len(lines) && !strlen(matchstr(lines[0], '\vBundler::GemNotFound'))
+    let was_outside_results_window = winnr() != run_tests_lib#ResultsWindowNumber()
+
     call <SID>SwitchToResultsWindow()
 
     for line in lines
@@ -87,7 +89,9 @@ function! s:JobHandler()
 
     normal! G
 
-    call <SID>SwitchToSourceWindow()
+    if was_outside_results_window
+      call <SID>SwitchToSourceWindow()
+    endif
   endif
 endfunction
 

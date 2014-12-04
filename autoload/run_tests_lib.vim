@@ -36,6 +36,8 @@ function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
   execute "set syntax=" . parent_syntax
   setlocal bufhidden=wipe buftype=nofile
   resize -15
+  let s:results_window_number = winnr()
+
   inoremap <buffer> <C-m> <ESC>:call <SID>SendCurrentLineToJob()<CR>
 endfunction
 
@@ -48,4 +50,8 @@ endfunction
 
 function! run_tests_lib#ClearScreen()
   normal! ggdG
+endfunction
+
+function! run_tests_lib#ResultsWindowNumber()
+  return s:results_window_number
 endfunction

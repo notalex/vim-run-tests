@@ -23,7 +23,7 @@ function! s:FocusedTestName()
 
   normal! k
 
-  if l:it_line_no
+  if l:it_line_no > l:def_line_no
     let l:line = getline(l:it_line_no)
     let l:method_name = matchlist(l:line, '\v%("|'')(.*)%("|'')')[1]
     let l:formatted_method_name = substitute(l:method_name, '\v%( |\/)', '.', 'g')

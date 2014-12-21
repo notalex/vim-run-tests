@@ -65,7 +65,12 @@ function! s:RunTestInSplit(run_focused)
   call run_tests_lib#ClearScreen()
   call <SID>SwitchToSourceWindow()
 
-  let ruby_command = ['-r', '/tmp/opts.rb', '-I', 'test'] + [s:source_file_path] + test_name_option
+  if !exists('g:ruby_test_opts_path')
+    let g:ruby_test_opts_path = tempname() . '.rb'
+    call writefile(['$stdout.sync = true'], g:ruby_test_opts_path)
+  endif
+
+  let ruby_command = ['-r', g:ruby_test_opts_path, '-I', 'test'] + [s:source_file_path] + test_name_option
   let g:current_tests_job = jobstart('test_runner', 'ruby', ruby_command)
 
   autocmd! JobActivity test_runner call <SID>JobHandler()

@@ -115,5 +115,5 @@ endfunction
 
 nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1)<CR>
 nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0)<CR>
-nmap <buffer> <F6>tc :call <SID>CloseTestWindow()<CR>
 nmap <buffer> <F6>tt :call <SID>RunTest()<CR>
+nmap <F6>tc :call <SID>CloseTestWindow()<CR>

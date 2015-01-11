@@ -34,7 +34,7 @@ function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
   execute a:split_type . ' ' . a:window_name
 
   execute "set syntax=" . parent_syntax
-  setlocal bufhidden=wipe buftype=nofile
+  setlocal bufhidden=wipe buftype=nofile wrap
   resize -15
   let s:results_window_number = winnr()
 

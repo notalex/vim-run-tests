@@ -113,7 +113,6 @@ function! s:RunTest()
   call run_tests_lib#Notification(7)
 endfunction
 
-nmap <buffer> <F6>tl :call run_tests_lib#ChooseTestWindowLayout()<CR>
 nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1)<CR>
 nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0)<CR>
 nmap <buffer> <F6>tt :call <SID>RunTest()<CR>

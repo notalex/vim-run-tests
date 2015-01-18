@@ -1,9 +1,4 @@
 "  private {{{1
-if !exists('g:run_tests_in_default_layout')
-  let g:run_tests_in_default_layout = 1
-  let g:run_tests_window_layout = 'rightbelow split'
-endif
-
 function! s:SaveToHistory(line)
   call <SID>MakeHistoryDirectory()
   call <SID>CreateMissingHistoryFile()
@@ -38,12 +33,12 @@ function! s:HistoryFilePath()
   return <SID>HistoryDirectoryPath() . '/' . working_directory_path . '.history'
 endfunction
 
-function! s:TestWindowLayouts()
-  return {
-    \ 1: 'Default (belowright split)',
-    \ 2: 'Even Horizontal (belowright split)',
-    \ 3: 'Even Vertical (vertical belowright split)'
-  \ }
+function! s:AdjustedWindowLayout()
+  if winwidth('.') > 160
+    return 'vertical belowright split'
+  else
+    return 'belowright split'
+  endif
 endfunction
 " private }}}
 
@@ -69,7 +64,7 @@ function! run_tests_lib#FindOrCreateWindowByName(window_name)
   if l:window_number > 0
     call run_tests_lib#SwitchToWindow(l:window_number)
   else
-    call run_tests_lib#CreateTemporaryWindow(g:run_tests_window_layout, a:window_name)
+    call run_tests_lib#CreateTemporaryWindow(<SID>AdjustedWindowLayout(), a:window_name)
   endif
 endfunction
 
@@ -79,6 +74,7 @@ endfunction
 
 function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
   let parent_syntax = &syntax
+  let quarter_window_height = winheight('.') / 4
 
   execute a:split_type . ' ' . a:window_name
 
@@ -86,9 +82,9 @@ function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
   setlocal bufhidden=wipe buftype=nofile wrap
   let s:results_window_number = winnr()
 
-  if g:run_tests_in_default_layout
-    resize -15
-  endif
+  if a:split_type == 'belowright split' && quarter_window_height >= 10
+    execute 'resize -' . quarter_window_height
+  end
 
   inoremap <buffer> <C-m> <ESC>:call <SID>SaveAndSendCurrentLineToJob()<CR>
   inoremap <buffer> <F6>n <C-R>=run_tests_lib#GetMatchingHistory()<CR>
@@ -113,15 +109,4 @@ endfunction
 
 function! run_tests_lib#ResultsWindowNumber()
   return s:results_window_number
-endfunction
-
-function! run_tests_lib#ChooseTestWindowLayout()
-  let layouts = <SID>TestWindowLayouts()
-
-  let selected_number = input("Select test window layout: \n" .
-                              \ join(items(layouts), "\n") . "\n")
-
-  let g:run_tests_in_default_layout = (selected_number == '1')
-  let selected_layout = get(layouts, selected_number)
-  let g:run_tests_window_layout = matchlist(selected_layout, '(\(.\+\))$', '')[1]
 endfunction

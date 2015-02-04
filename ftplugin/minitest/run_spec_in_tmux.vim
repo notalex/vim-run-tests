@@ -11,7 +11,7 @@ function! s:ResultsWindowName()
 endfunction
 
 function! s:SwitchToSourceWindow()
-  call run_tests_lib#SwitchToWindow(s:source_window_number)
+  wincmd p
 endfunction
 
 function! s:FocusedTestName()
@@ -50,7 +50,6 @@ endfunction
 " end private }}}
 
 function! s:RunTestInSplit(run_focused)
-  let s:source_window_number = winnr()
   let s:source_file_path = expand('%:p')
   let focused_test_name = <SID>FocusedTestName()
 

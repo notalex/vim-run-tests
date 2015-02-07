@@ -40,6 +40,10 @@ function! s:AdjustedWindowLayout()
     return 'belowright split'
   endif
 endfunction
+
+function! s:StripLeadingAndTrailingSpaces(string)
+  return substitute(a:string, '\v(^\s*|\s*$)', '', 'g')
+endfunction
 " private }}}
 
 function! run_tests_lib#Notification(target)
@@ -97,7 +101,7 @@ function! run_tests_lib#GetMatchingHistory()
 endfunction
 
 function! s:SaveAndSendCurrentLineToJob()
-  let current_line_contents = getline('.')
+  let current_line_contents = <SID>StripLeadingAndTrailingSpaces(getline('.'))
   if len(current_line_contents) > 1
     call <SID>SaveToHistory(current_line_contents)
   endif

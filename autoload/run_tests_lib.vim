@@ -4,8 +4,18 @@ function! s:SaveToHistory(line)
   call <SID>CreateMissingHistoryFile()
   let history_file_path = <SID>HistoryFilePath()
   let current_history_contents = readfile(history_file_path)
-  let updated_contents = [a:line] + current_history_contents
+  let updated_contents = <SID>CreateUniqueList(current_history_contents, a:line)
   call writefile(updated_contents[0:50], history_file_path)
+endfunction
+
+function! s:CreateUniqueList(list, new_element)
+  let old_element_index = index(a:list, a:new_element)
+
+  if old_element_index > -1
+    call remove(a:list, old_element_index)
+  endif
+
+  return insert(a:list, a:new_element)
 endfunction
 
 function! s:MakeHistoryDirectory()

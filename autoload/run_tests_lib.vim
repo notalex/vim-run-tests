@@ -98,7 +98,9 @@ endfunction
 
 function! s:SaveAndSendCurrentLineToJob()
   let current_line_contents = getline('.')
-  call <SID>SaveToHistory(current_line_contents)
+  if len(current_line_contents) > 1
+    call <SID>SaveToHistory(current_line_contents)
+  endif
   " Without this, the input would be printed twice.
   normal! dd
   silent! call jobsend(g:current_tests_job, current_line_contents . "\n")

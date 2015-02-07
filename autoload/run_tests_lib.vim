@@ -88,6 +88,7 @@ function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)
 
   inoremap <buffer> <C-m> <ESC>:call <SID>SaveAndSendCurrentLineToJob()<CR>
   inoremap <buffer> <F6>n <C-R>=run_tests_lib#GetMatchingHistory()<CR>
+  nnoremap <buffer> <F6>nn :call jobsend(g:current_tests_job, "next\n")<CR>
 endfunction
 
 function! run_tests_lib#GetMatchingHistory()

@@ -43,10 +43,6 @@ function! s:TestHelperPath()
   return matchstr(s:path, '\v.*test\/')
 endfunction
 
-function! s:SwitchToResultsWindow()
-  call run_tests_lib#FindOrCreateWindowByName(<SID>ResultsWindowName())
-endfunction
-
 " end private }}}
 
 function! s:RunTestInSplit(run_focused)
@@ -61,7 +57,7 @@ function! s:RunTestInSplit(run_focused)
   end
 
   let previous_file = expand('#')
-  call <SID>SwitchToResultsWindow()
+  call run_tests_lib#FindOrCreateWindowByName(<SID>ResultsWindowName())
   call run_tests_lib#ClearScreen()
   call <SID>SwitchToSourceWindow()
   call run_tests_lib#SetAlternateFile(previous_file)
@@ -87,17 +83,17 @@ function! s:JobHandler()
   if len(lines) && !strlen(matchstr(lines[0], '\vBundler::GemNotFound'))
     let was_outside_results_window = winnr() != run_tests_lib#ResultsWindowNumber()
 
-    call <SID>SwitchToResultsWindow()
+    if run_tests_lib#SwitchToResultsWindow(<SID>ResultsWindowName())
+      for line in lines
+        call append(line('$'), line)
+      endfor
 
-    for line in lines
-      call append(line('$'), line)
-    endfor
+      normal! G
 
-    normal! G
-
-    if was_outside_results_window
-      call <SID>SwitchToSourceWindow()
-    endif
+      if was_outside_results_window
+        call <SID>SwitchToSourceWindow()
+      endif
+    end
   endif
 endfunction
 

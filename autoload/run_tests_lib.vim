@@ -73,17 +73,20 @@ function! run_tests_lib#ZeusCommand()
 endfunction
 
 function! run_tests_lib#FindOrCreateWindowByName(window_name)
-  let l:window_number = bufwinnr(a:window_name . '$')
-
-  if l:window_number > 0
-    call run_tests_lib#SwitchToWindow(l:window_number)
-  else
+  if !run_tests_lib#SwitchToResultsWindow(a:window_name)
     call run_tests_lib#CreateTemporaryWindow(<SID>AdjustedWindowLayout(), a:window_name)
   endif
 endfunction
 
-function! run_tests_lib#SwitchToWindow(window_number)
-  execute a:window_number . 'wincmd w'
+function! run_tests_lib#SwitchToResultsWindow(window_name)
+  let window_number = bufwinnr(a:window_name . '$')
+
+  if window_number > 0
+    execute window_number . 'wincmd w'
+    return 1
+  else
+    return 0
+  end
 endfunction
 
 function! run_tests_lib#CreateTemporaryWindow(split_type, window_name)

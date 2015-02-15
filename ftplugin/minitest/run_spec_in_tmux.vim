@@ -60,9 +60,11 @@ function! s:RunTestInSplit(run_focused)
     let test_name_option = []
   end
 
+  let previous_file = expand('#')
   call <SID>SwitchToResultsWindow()
   call run_tests_lib#ClearScreen()
   call <SID>SwitchToSourceWindow()
+  call run_tests_lib#SetAlternateFile(previous_file)
 
   if !exists('g:ruby_test_opts_path')
     let g:ruby_test_opts_path = tempname() . '.rb'

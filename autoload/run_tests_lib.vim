@@ -127,3 +127,10 @@ endfunction
 function! run_tests_lib#ResultsWindowNumber()
   return s:results_window_number
 endfunction
+
+function! run_tests_lib#SetAlternateFile(previous_file)
+  if strlen(a:previous_file)
+    execute 'buffer ' . a:previous_file
+    buffer #
+  endif
+endfunction

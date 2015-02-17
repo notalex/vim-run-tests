@@ -104,7 +104,6 @@ endfunction
 
 function! s:RunTest()
   let l:command = 'ruby -I' . s:TestHelperPath()
-  "let l:command = 'cd; cd -; ' . l:command
 
   call system("tmux send-key -t 7 '" . l:command . " " . expand('%') . "' Enter")
   call run_tests_lib#Notification(7)

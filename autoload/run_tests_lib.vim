@@ -132,7 +132,7 @@ function! run_tests_lib#ResultsWindowNumber()
 endfunction
 
 function! run_tests_lib#SetAlternateFile(previous_file)
-  if strlen(a:previous_file)
+  if strlen(a:previous_file) && a:previous_file != expand('%')
     execute 'buffer ' . a:previous_file
     buffer #
   endif

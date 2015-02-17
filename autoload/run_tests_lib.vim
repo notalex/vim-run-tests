@@ -44,7 +44,7 @@ function! s:HistoryFilePath()
 endfunction
 
 function! s:AdjustedWindowLayout()
-  if winwidth('.') > 160
+  if winwidth('.') > 158
     return 'vertical belowright split'
   else
     return 'belowright split'

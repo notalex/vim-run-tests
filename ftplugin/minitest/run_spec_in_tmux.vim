@@ -60,7 +60,7 @@ function! s:RunTestInSplit(run_focused)
   call run_tests_lib#FindOrCreateWindowByName(<SID>ResultsWindowName())
   call run_tests_lib#ClearScreen()
   call <SID>SwitchToSourceWindow()
-  call run_tests_lib#SetAlternateFile(previous_file)
+  call common_functions_lib#SetAlternateFile(previous_file)
 
   if !exists('g:ruby_test_opts_path')
     let g:ruby_test_opts_path = tempname() . '.rb'

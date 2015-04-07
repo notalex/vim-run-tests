@@ -45,7 +45,7 @@ endfunction
 
 " end private }}}
 
-function! s:RunTestInSplit(run_focused)
+function! s:RunTestInSplit(run_focused, repeat_previous_test)
   let s:source_file_path = expand('%:p')
   let focused_test_name = <SID>FocusedTestName()
 
@@ -67,8 +67,10 @@ function! s:RunTestInSplit(run_focused)
     call writefile(['$stdout.sync = true'], g:ruby_test_opts_path)
   endif
 
-  let ruby_command = ['-r', g:ruby_test_opts_path, '-I', 'test'] + [s:source_file_path] + test_name_option
-  let g:current_tests_job = jobstart('test_runner', 'ruby', ruby_command)
+  if !a:repeat_previous_test
+    let s:ruby_command = ['-r', g:ruby_test_opts_path, '-I', 'test'] + [s:source_file_path] + test_name_option
+  endif
+  let g:current_tests_job = jobstart('test_runner', 'ruby', s:ruby_command)
 
   autocmd! JobActivity test_runner call <SID>JobHandler()
 endfunction
@@ -109,7 +111,8 @@ function! s:RunTest()
   call run_tests_lib#Notification(7)
 endfunction
 
-nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1)<CR>
-nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0)<CR>
+nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1, 0)<CR>
+nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0, 0)<CR>
 nmap <buffer> <F6>tt :call <SID>RunTest()<CR>
 nmap <F6>tc :call <SID>CloseTestWindow()<CR>
+nmap <F6>tr :call <SID>RunTestInSplit(1, 1)<CR>

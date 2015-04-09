@@ -4,6 +4,10 @@ else
   let b:loaded_vim_run_tests = 1
 endif
 
+if !exists('g:vim_run_tests_prefix')
+  let g:vim_run_tests_prefix = '<leader>'
+endif
+
 " private {{{1
 function! s:SwitchToSourceWindow()
   wincmd p
@@ -73,8 +77,9 @@ function! s:RunTest()
   call run_tests_lib#Notification(7)
 endfunction
 
-nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1, 0)<CR>
-nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0, 0)<CR>
-nmap <buffer> <F6>tt :call <SID>RunTest()<CR>
-nmap <F6>tc :call run_tests_lib#CloseTestWindow()<CR>
-nmap <F6>tr :call <SID>RunTestInSplit(1, 1)<CR>
+let prefix = g:vim_run_tests_prefix
+execute 'nmap <buffer> ' . prefix . 'tf :call <SID>RunTestInSplit(1, 0)<CR>'
+execute 'nmap <buffer> ' . prefix . 'ts :call <SID>RunTestInSplit(0, 0)<CR>'
+execute 'nmap <buffer> ' . prefix . 'tt :call <SID>RunTest()<CR>'
+execute 'nmap ' . prefix . 'tc :call run_tests_lib#CloseTestWindow()<CR>'
+execute 'nmap ' . prefix . 'tr :call <SID>RunTestInSplit(1, 1)<CR>'

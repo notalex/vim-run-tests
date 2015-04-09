@@ -59,7 +59,11 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
   call termopen(s:ruby_command)
 
   call <SID>SwitchToSourceWindow()
-  call common_functions_lib#SetAlternateFile(previous_file)
+
+  try
+    call common_functions_lib#SetAlternateFile(previous_file)
+  catch
+  endtry
 endfunction
 
 function! s:RunTest()

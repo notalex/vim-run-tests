@@ -5,11 +5,6 @@ else
 endif
 
 " private {{{1
-
-function! s:ResultsWindowName()
-  return '__Ruby_Test_Results__'
-endfunction
-
 function! s:SwitchToSourceWindow()
   wincmd p
 endfunction
@@ -51,57 +46,20 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
 
   " strlen(0) => 1
   if strlen(focused_test_name) > 1 && a:run_focused
-    let test_name_option = ['--name', '/' . focused_test_name . '/']
+    let test_name_option = '--name /' . focused_test_name . '/'
   else
-    let test_name_option = []
+    let test_name_option = ''
   end
 
   let previous_file = expand('#')
-  call run_tests_lib#FindOrCreateWindowByName(<SID>ResultsWindowName())
-  call run_tests_lib#ClearScreen()
+  if !a:repeat_previous_test
+    let s:ruby_command = 'ruby -I test ' . s:source_file_path . ' ' . test_name_option
+  end
+  call run_tests_lib#ReCreateTestWindow()
+  call termopen(s:ruby_command)
+
   call <SID>SwitchToSourceWindow()
   call common_functions_lib#SetAlternateFile(previous_file)
-
-  if !exists('g:ruby_test_opts_path')
-    let g:ruby_test_opts_path = tempname() . '.rb'
-    call writefile(['$stdout.sync = true'], g:ruby_test_opts_path)
-  endif
-
-  if !a:repeat_previous_test
-    let s:ruby_command = ['-r', g:ruby_test_opts_path, '-I', 'test'] + [s:source_file_path] + test_name_option
-  endif
-  let g:current_tests_job = jobstart('test_runner', 'ruby', s:ruby_command)
-
-  autocmd! JobActivity test_runner call <SID>JobHandler()
-endfunction
-
-function! s:JobHandler()
-  if v:job_data[1] == 'exit'
-    let lines = []
-  else
-    let lines = v:job_data[2]
-  endif
-
-  if len(lines) && !strlen(matchstr(lines[0], '\vBundler::GemNotFound'))
-    let was_outside_results_window = winnr() != run_tests_lib#ResultsWindowNumber()
-
-    if run_tests_lib#SwitchToResultsWindow(<SID>ResultsWindowName())
-      for line in lines
-        call append(line('$'), line)
-      endfor
-
-      normal! G
-
-      if was_outside_results_window
-        call <SID>SwitchToSourceWindow()
-      endif
-    end
-  endif
-endfunction
-
-function! s:CloseTestWindow()
-  silent! call jobstop(g:current_tests_job)
-  execute 'bdelete ' . <SID>ResultsWindowName()
 endfunction
 
 function! s:RunTest()
@@ -114,5 +72,5 @@ endfunction
 nmap <buffer> <F6>tf :call <SID>RunTestInSplit(1, 0)<CR>
 nmap <buffer> <F6>ts :call <SID>RunTestInSplit(0, 0)<CR>
 nmap <buffer> <F6>tt :call <SID>RunTest()<CR>
-nmap <F6>tc :call <SID>CloseTestWindow()<CR>
+nmap <F6>tc :call run_tests_lib#CloseTestWindow()<CR>
 nmap <F6>tr :call <SID>RunTestInSplit(1, 1)<CR>

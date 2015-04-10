@@ -11,6 +11,7 @@ function! s:CreateTemporaryWindow(split_type)
   let quarter_window_height = winheight('.') / 4
 
   execute a:split_type . ' vnew'
+  set syntax=sh
 
   let s:results_buffer_number = bufnr('%')
 

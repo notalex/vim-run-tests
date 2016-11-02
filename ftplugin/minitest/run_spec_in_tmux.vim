@@ -57,7 +57,7 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
 
   let previous_file = expand('#')
   if !a:repeat_previous_test
-    let s:ruby_command = 'ruby -I test ' . s:source_file_path . ' ' . test_name_option
+    let s:ruby_command = 'bundle exec ruby -I test ' . s:source_file_path . ' ' . test_name_option
   end
   call run_tests_lib#ReCreateTestWindow()
   call termopen(s:ruby_command)
@@ -71,7 +71,7 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
 endfunction
 
 function! s:RunTest()
-  let l:command = 'ruby -I' . s:TestHelperPath()
+  let l:command = 'bundle exec ruby -I' . s:TestHelperPath()
 
   call system("tmux send-key -t 7 '" . l:command . " " . expand('%') . "' Enter")
   call run_tests_lib#Notification(7)

@@ -1,3 +1,9 @@
+if exists('g:vim_tests_resize')
+  finish
+else
+  let g:vim_tests_resize = 0
+endif
+
 "  private {{{1
 function! s:AdjustedWindowLayout()
   if winwidth('.') > 158
@@ -15,7 +21,7 @@ function! s:CreateTemporaryWindow(split_type)
 
   let s:results_buffer_number = bufnr('%')
 
-  if a:split_type == 'belowright split' && quarter_window_height >= 10
+  if g:vim_tests_resize && a:split_type == 'belowright split' && quarter_window_height >= 10
     execute 'resize -' . quarter_window_height
   end
 endfunction

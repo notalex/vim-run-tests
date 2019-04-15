@@ -1,6 +1,4 @@
-if exists('g:vim_tests_resize')
-  finish
-else
+if !exists('g:vim_tests_resize')
   let g:vim_tests_resize = 0
 endif
 

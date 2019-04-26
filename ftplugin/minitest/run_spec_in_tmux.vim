@@ -37,11 +37,21 @@ function! s:FocusedTestName()
   endif
 endfunction
 
-function! s:TestHelperPath()
-  let s:path = expand('%:.')
-  return matchstr(s:path, '\v.*test\/')
+function! s:IncludeTestPath()
+  if isdirectory('test')
+    return '-Itest '
+  elseif isdirectory('spec')
+    return '-Ispec '
+  endif
 endfunction
 
+function! s:RubyTestCommand()
+  if filereadable('Gemfile')
+    return 'bundle exec ruby '
+  endif
+
+  return 'ruby '
+endfunction
 " end private }}}
 
 function! s:RunTestInSplit(run_focused, repeat_previous_test)
@@ -57,7 +67,7 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
 
   let previous_file = expand('#')
   if !a:repeat_previous_test
-    let s:ruby_command = s:RubyTestCommand() . 'test ' . s:source_file_path . ' ' . test_name_option
+    let s:ruby_command = s:RubyTestCommand() . s:IncludeTestPath() . s:source_file_path . ' ' . test_name_option
   end
   call run_tests_lib#ReCreateTestWindow()
   call termopen(s:ruby_command)
@@ -70,19 +80,11 @@ function! s:RunTestInSplit(run_focused, repeat_previous_test)
   endtry
 endfunction
 
-function! s:RubyTestCommand()
-  if filereadable('Gemfile')
-    return 'bundle exec ruby -I'
-  endif
-
-  return 'ruby -I'
-endfunction
-
 function! s:RunTest()
-  let l:command = s:RubyTestCommand() . s:TestHelperPath()
+  let l:command = s:RubyTestCommand() . s:IncludeTestPath()
 
-  call system("tmux send-key -t 7 '" . l:command . " " . expand('%') . "' Enter")
-  call run_tests_lib#Notification(7)
+  call system("tmux send-key -t 7 '" . l:command . expand('%') . "' Enter")
+  " call run_tests_lib#Notification(7)
 endfunction
 
 let prefix = g:vim_run_tests_prefix

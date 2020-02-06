@@ -1,46 +1,56 @@
-function! s:FocusedTestName()
-  let s:focused_test_name = expand('%:p') . ':' . line('.')
-  return s:focused_test_name
+if exists('b:loaded_vim_run_tests')
+  finish
+else
+  let b:loaded_vim_run_tests = 1
+endif
+
+if !exists('g:vim_run_tests_prefix')
+  let g:vim_run_tests_prefix = '<leader>'
+endif
+
+" private {{{1
+function! s:SwitchToSourceWindow()
+  wincmd p
 endfunction
 
-function! s:RspecCommand()
-  if run_tests_lib#ZeusPresent()
-    return run_tests_lib#ZeusCommand()
-  elseif run_tests_lib#SporkPresent()
-    return 'bundle exec rspec --drb'
-  else
-    return 'bundle exec rspec'
-  endif
+function! s:RubyTestCommand()
+  return 'bundle exec rspec '
 endfunction
+" end private }}}
 
-function! s:SwitchOrCreateResultsPane()
-  if system('tmux list-panes | wc -l') == 2
-    call system('tmux select-pane -t 1')
+function! s:RunTestInSplit(run_focused, repeat_previous_test)
+  let s:source_file_path = expand('%:p')
+
+  if a:run_focused
+    let l:test_name_option = ':' . line('.')
   else
-    call system('tmux split-window')
-  endif
+    let l:test_name_option = ''
+  end
+
+  let l:previous_file = expand('#')
+  if !a:repeat_previous_test
+    let s:ruby_command = s:RubyTestCommand() . s:source_file_path . l:test_name_option
+  end
+  call run_tests_lib#ReCreateTestWindow()
+  call termopen(s:ruby_command)
+
+  call <SID>SwitchToSourceWindow()
+
+  try
+    call common_functions_lib#SetAlternateFile(l:previous_file)
+  catch
+  endtry
 endfunction
 
 function! s:RunTest()
-  call system("tmux send-key -t 7 '" . s:RspecCommand() . " " . expand('%:p') . "' Enter")
-  call run_tests_lib#Notification(7)
+  let l:command = s:RubyTestCommand()
+
+  call system("tmux send-key -t 7 '" . l:command . expand('%') . "' Enter")
 endfunction
 
-function! s:RunTestInSplit(run_focused)
-  call s:SwitchOrCreateResultsPane()
-
-  if a:run_focused
-    let l:file_name = s:FocusedTestName()
-  else
-    let l:file_name = expand('%')
-  endif
-
-  call system("tmux send-key -t 1 '" . s:RspecCommand() . " " . l:file_name . "' Enter")
-  call run_tests_lib#Notification(1)
-
-  call system("tmux last-pane")
-endfunction
-
-nmap <buffer> <F6>rf :call <SID>RunTestInSplit(1)<CR>
-nmap <buffer> <F6>rs :call <SID>RunTestInSplit(0)<CR>
-nmap <buffer> <F6>rt :call <SID>RunTest()<CR>
+let prefix = g:vim_run_tests_prefix
+execute 'nmap <buffer> ' . prefix . 'tf :call <SID>RunTestInSplit(1, 0)<CR>'
+execute 'nmap <buffer> ' . prefix . 'ts :call <SID>RunTestInSplit(0, 0)<CR>'
+execute 'nmap <buffer> ' . prefix . 'tt :call <SID>RunTest()<CR>'
+execute 'nmap ' . prefix . 'tc :call run_tests_lib#CloseTestWindow()<CR>'
+execute 'nmap ' . prefix . 'tr :call <SID>RunTestInSplit(1, 1)<CR>'

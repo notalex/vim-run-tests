@@ -39,15 +39,21 @@ endfunction
 
 function! s:IncludeTestPath()
   if isdirectory('test')
-    return '-Itest '
+    let l:folder_name = 'test '
   elseif isdirectory('spec')
-    return '-Ispec '
+    let l:folder_name = 'spec '
   endif
+
+  if filereadable('Gemfile')
+    return l:folder_name
+  else
+    return '-I' . l:folder_name
+  end
 endfunction
 
 function! s:RubyTestCommand()
   if filereadable('Gemfile')
-    return 'bundle exec ruby '
+    return 'bin/rails '
   endif
 
   return 'ruby '
@@ -56,18 +62,21 @@ endfunction
 
 function! s:RunTestInSplit(run_focused, repeat_previous_test)
   let s:source_file_path = expand('%:p')
-  let focused_test_name = <SID>FocusedTestName()
+  if !filereadable('Gemfile')
+    let focused_test_name = <SID>FocusedTestName()
+  end
 
-  " strlen(0) => 1
-  if strlen(focused_test_name) > 1 && a:run_focused
-    let test_name_option = '--name /' . focused_test_name . '/'
+  if a:run_focused && filereadable('Gemfile')
+    let test_name_option = ':' . line('.')
+  elseif a:run_focused && strlen(focused_test_name) > 1  " strlen(0) => 1
+    let test_name_option = ' --name /' . focused_test_name . '/'
   else
     let test_name_option = ''
   end
 
   let previous_file = expand('#')
   if !a:repeat_previous_test
-    let s:ruby_command = s:RubyTestCommand() . s:IncludeTestPath() . s:source_file_path . ' ' . test_name_option
+    let s:ruby_command = 'bundle exec ' . s:RubyTestCommand() . s:IncludeTestPath() . s:source_file_path . test_name_option
   end
   call run_tests_lib#ReCreateTestWindow()
   call termopen(s:ruby_command)

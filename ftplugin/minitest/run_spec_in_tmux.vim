@@ -44,15 +44,19 @@ function! s:IncludeTestPath()
     let l:folder_name = 'spec '
   endif
 
-  if filereadable('Gemfile')
+  if s:IsRailsApp()
     return l:folder_name
   else
     return '-I' . l:folder_name
   end
 endfunction
 
+function! s:IsRailsApp()
+  return filereadable('Gemfile') && system('cat Gemfile | grep rails')
+endfunction
+
 function! s:RubyTestCommand()
-  if filereadable('Gemfile')
+  if s:IsRailsApp()
     return 'bin/rails '
   endif
 
@@ -62,11 +66,11 @@ endfunction
 
 function! s:RunTestInSplit(run_focused, repeat_previous_test)
   let s:source_file_path = expand('%:p')
-  if !filereadable('Gemfile')
+  if !s:IsRailsApp()
     let focused_test_name = <SID>FocusedTestName()
   end
 
-  if a:run_focused && filereadable('Gemfile')
+  if a:run_focused && s:IsRailsApp()
     let test_name_option = ':' . line('.')
   elseif a:run_focused && strlen(focused_test_name) > 1  " strlen(0) => 1
     let test_name_option = ' --name /' . focused_test_name . '/'
